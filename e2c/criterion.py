@@ -23,4 +23,24 @@ def KLDCriterion(inp, target):
     return output
 
 def KLDistCriterion(inp, target):
-    
+    sizeAverage = False
+    # Removed clone from torch7 code
+    q_mu = inp[0, 0]
+    q_sigma = torch.exp(inp[1, 0])
+    p_mu = target[0, 0]
+    p_sigma = torch.exp(target[1, 0])
+
+    n_dim = torch.numel(q_mu)
+
+    iqv = torch.ones(n_dim)
+    iqv = iqv / q_sigma
+
+    diff = q_mu - p_mu
+
+    output = - (torch.sum(torch.log(q_sigma)) -
+                torch.sum(torch.log(p_sigma)) +
+                torch.sum(iqv * p_sigma) +
+                torch.sum(torch.pow(diff, 2) * iqv) -
+                n_dim) / 2
+
+    return output

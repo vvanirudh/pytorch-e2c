@@ -17,8 +17,8 @@ class LinearO(nn.Linear):
     def reset_parameters(self):
         initScale = 1.1
 
-        M1 = Variable(torch.randn(self.weight.size(0), self.weight.size(0))).cuda()
-        M2 = Variable(torch.randn(self.weight.size(1), self.weight.size(1))).cuda()
+        M1 = Variable(torch.randn(self.weight.size(0), self.weight.size(0)))
+        M2 = Variable(torch.randn(self.weight.size(1), self.weight.size(1)))
 
         n_min = min(self.weight.size(0), self.weight.size(1))
 
@@ -46,5 +46,20 @@ class AddCons(nn.Module):
             self.output.resizeAs_(inp)
             self.output.copy_(inp)
             self.output.add_(self.constant_scalar)
+
+        return self.output
+
+    
+class Reparametrize(nn.Module):
+
+    def __init__(self, dimension):
+        super(Reparametrize, self).__init__()
+        self.dimension = dimension
+
+    def forward(self, inp):
+        self.eps = torch.randn(inp[1].size(0), self.dimension)
+        self.output = torch.exp(torch.mul(inp[1], 0.5)) * self.eps
+
+        self.output = self.output + inp[0]
 
         return self.output
