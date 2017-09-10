@@ -63,3 +63,8 @@ class Reparametrize(nn.Module):
         self.output = self.output + inp[0]
 
         return self.output
+
+
+class E2C(nn.Module):
+
+    def __init__(self)

@@ -6,6 +6,8 @@ Date: 7th September, 2017
 '''
 
 import argparse
+import h5py
+import torch
 
 
 def main():
@@ -37,4 +39,22 @@ def train(args):
     Train function
     args : Arguments from the command line parser
     '''
+
+    myFile = h5py.File('data/single_pendulum_nogravity.h5', 'r')
+    y_all = myFile['train_y'][:]
+    u_all = myFile['train_u'][:].reshape(y_all.size(), args.action_size)
+
+    myFile.close()
+
+    y = y_all[:4900]
+    u = u_all[:4900]
+
+    ys = y_all[4900:]
+    us = u_all[4900:]
+
+    img_w = torch.sqrt(y.shape[1])
+    img_h = torch.sqrt(y.shape[1])
+    max_seq_length = y.shape[0] - 1
+
+    
     
